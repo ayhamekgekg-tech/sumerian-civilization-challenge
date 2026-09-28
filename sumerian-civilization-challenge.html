@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#F9E6A8">
+  <title>🏺 تحدي الحضارة السومرية</title>
+  <style>
+    :root {
+      --sand: #F9E6A8;
+      --brown: #4D2A00;
+      --brown-soft: rgba(77, 42, 0, .12);
+      --brown-mid: rgba(77, 42, 0, .22);
+      --paper: rgba(255, 248, 213, .48);
+      --shadow: 0 18px 50px rgba(77, 42, 0, .15);
+      font-family: Tahoma, "Arial", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      color: var(--brown);
+      background:
+        linear-gradient(135deg, transparent 24%, var(--brown-soft) 25%, transparent 26%) 0 0 / 42px 42px,
+        linear-gradient(45deg, transparent 24%, var(--brown-soft) 25%, transparent 26%) 0 0 / 42px 42px,
+        var(--sand);
+    }
+
+    button {
+      border: 0;
+      font: inherit;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible {
+      outline: 3px solid var(--brown);
+      outline-offset: 3px;
+    }
+
+    .app-shell {
+      width: min(100% - 28px, 850px);
+      margin: 0 auto;
+      padding: 22px 0 32px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      flex: 0 0 auto;
+      border: 2px solid var(--brown);
+      border-radius: 14px 14px 20px 20px;
+      background: var(--paper);
+      font-size: 25px;
+      box-shadow: 4px 4px 0 var(--brown);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(1rem, 3vw, 1.35rem);
+      line-height: 1.25;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      font-size: .78rem;
+      opacity: .72;
+    }
+
+    .score-pill {
+      flex: 0 0 auto;
+      padding: 9px 14px;
+      border: 2px solid var(--brown);
+      border-radius: 999px;
+      background: var(--paper);
+      font-weight: 800;
+      white-space: nowrap;
+      box-shadow: 3px 3px 0 var(--brown);
+    }
+
+    .screen {
+      display: none;
+      animation: rise .35s ease both;
+    }
+
+    .screen.active { display: block; }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      border: 2px solid var(--brown);
+      border-radius: 25px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .card::before,
+    .card::after {
+      position: absolute;
+      z-index: 0;
+      width: 70px;
+      height: 70px;
+      border: 2px solid var(--brown);
+      opacity: .11;
+      content: "";
+      transform: rotate(45deg);
+    }
+
+    .card::before { top: -39px; right: -39px; }
+    .card::after { bottom: -39px; left: -39px; }
+
+    .welcome-card {
+      padding: clamp(30px, 8vw, 70px) clamp(22px, 8vw, 76px);
+      text-align: center;
+    }
+
+    .welcome-emoji {
+      display: block;
+      margin-bottom: 12px;
+      font-size: clamp(3.5rem, 15vw, 6.5rem);
+      filter: drop-shadow(5px 8px 0 rgba(77, 42, 0, .13));
+    }
+
+    .welcome-card h2,
+    .result-card h2 {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      font-size: clamp(1.8rem, 7vw, 3.1rem);
+      line-height: 1.25;
+    }
+
+    .welcome-card .lead {
+      position: relative;
+      z-index: 1;
+      max-width: 440px;
+      margin: 14px auto 25px;
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      line-height: 1.8;
+    }
+
+    .welcome-facts {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin: 22px auto 30px;
+      max-width: 540px;
+    }
+
+    .fact {
+      padding: 12px 7px;
+      border: 1px solid var(--brown-mid);
+      border-radius: 15px;
+      background: rgba(249, 230, 168, .52);
+      font-size: .8rem;
+      line-height: 1.5;
+    }
+
+    .fact strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 1.25rem;
+    }
+
+    .primary-button,
+    .secondary-button {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 54px;
+      padding: 13px 24px;
+      border: 2px solid var(--brown);
+      border-radius: 15px;
+      font-weight: 800;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+
+    .primary-button {
+      color: var(--sand);
+      background: var(--brown);
+      box-shadow: 4px 4px 0 rgba(77, 42, 0, .28);
+    }
+
+    .secondary-button {
+      color: var(--brown);
+      background: transparent;
+    }
+
+    .primary-button:hover,
+    .secondary-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .primary-button:active,
+    .secondary-button:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    .best-note {
+      position: relative;
+      z-index: 1;
+      min-height: 22px;
+      margin: 18px 0 0;
+      font-size: .9rem;
+      opacity: .82;
+    }
+
+    .quiz-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .question-count {
+      font-size: .96rem;
+      font-weight: 800;
+    }
+
+    .question-count span { font-variant-numeric: tabular-nums; }
+
+    .round-score {
+      padding: 8px 12px;
+      border: 2px solid var(--brown);
+      border-radius: 999px;
+      background: var(--paper);
+      font-size: .9rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      height: 13px;
+      overflow: hidden;
+      border: 2px solid var(--brown);
+      border-radius: 999px;
+      background: rgba(249, 230, 168, .55);
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--brown);
+      transition: width .35s ease;
+    }
+
+    .question-card {
+      margin-top: 18px;
+      padding: clamp(20px, 5vw, 38px);
+    }
+
+    .topic-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border: 1px solid var(--brown);
+      border-radius: 999px;
+      background: rgba(249, 230, 168, .65);
+      font-size: .78rem;
+      font-weight: 800;
+    }
+
+    .question-text {
+      margin: 20px 0 23px;
+      font-size: clamp(1.35rem, 4.8vw, 2rem);
+      line-height: 1.65;
+    }
+
+    .answers {
+      display: grid;
+      gap: 11px;
+    }
+
+    .answer-button {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      width: 100%;
+      min-height: 61px;
+      padding: 12px 14px;
+      border: 2px solid var(--brown);
+      border-radius: 15px;
+      color: var(--brown);
+      background: rgba(249, 230, 168, .43);
+      text-align: right;
+      line-height: 1.5;
+      transition: transform .16s ease, background .16s ease, color .16s ease;
+    }
+
+    .answer-button:not(:disabled):hover {
+      transform: translateX(-3px);
+      background: rgba(77, 42, 0, .1);
+    }
+
+    .answer-letter {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+      border: 1px solid var(--brown);
+      border-radius: 10px;
+      font-weight: 800;
+    }
+
+    .answer-button.correct {
+      color: var(--sand);
+      background: var(--brown);
+    }
+
+    .answer-button.correct .answer-letter {
+      border-color: var(--sand);
+    }
+
+    .answer-button.wrong {
+      background: rgba(77, 42, 0, .19);
+      box-shadow: inset 0 0 0 2px var(--brown);
+    }
+
+    .answer-button:disabled { cursor: default; }
+
+    .feedback {
+      display: none;
+      margin-top: 18px;
+      padding: 14px 16px;
+      border: 2px solid var(--brown);
+      border-radius: 15px;
+      background: rgba(249, 230, 168, .72);
+      line-height: 1.7;
+    }
+
+    .feedback.show { display: block; }
+    .feedback strong { display: block; font-size: 1.1rem; }
+    .feedback small { display: block; margin-top: 3px; }
+
+    .restart-button {
+      display: none;
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .restart-button.show { display: inline-flex; }
+
+    .result-card {
+      padding: clamp(30px, 8vw, 64px) clamp(22px, 8vw, 76px);
+      text-align: center;
+    }
+
+    .result-emoji {
+      position: relative;
+      z-index: 1;
+      display: block;
+      margin-bottom: 12px;
+      font-size: 4rem;
+    }
+
+    .result-card p {
+      position: relative;
+      z-index: 1;
+      margin: 12px 0;
+      line-height: 1.8;
+    }
+
+    .final-score {
+      position: relative;
+      z-index: 1;
+      margin: 20px 0 5px;
+      font-size: clamp(3rem, 12vw, 5rem);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .result-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 520px) {
+      .app-shell { width: min(100% - 18px, 850px); padding-top: 13px; }
+      .topbar { margin-bottom: 13px; }
+      .brand-mark { width: 40px; height: 40px; font-size: 21px; }
+      .brand p { display: none; }
+      .score-pill { padding: 8px 10px; font-size: .8rem; }
+      .welcome-facts { gap: 6px; }
+      .fact { font-size: .72rem; }
+      .quiz-header { align-items: flex-start; }
+      .question-count { font-size: .84rem; }
+      .round-score { padding: 7px 9px; font-size: .8rem; }
+      .question-card { padding: 18px 14px; }
+      .question-text { margin: 16px 0 18px; }
+      .answer-button { min-height: 57px; padding: 10px; font-size: .92rem; }
+      .result-actions .primary-button,
+      .result-actions .secondary-button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">🏺</span>
+        <div>
+          <h1>تحدي الحضارة السومرية</h1>
+          <p>تعلّم، أجب، وحطّم رقمك القياسي</p>
+        </div>
+      </div>
+      <div class="score-pill" id="bestScore" aria-live="polite">أفضل نتيجة: 0</div>
+    </header>
+
+    <section id="welcomeScreen" class="screen active" aria-labelledby="welcomeTitle">
+      <div class="card welcome-card">
+        <span class="welcome-emoji" aria-hidden="true">🏺</span>
+        <h2 id="welcomeTitle">تحدي الحضارة السومرية</h2>
+        <p class="lead">اختبر معلوماتك عن إنجازات السومريين ومظاهر حضارتهم وأسباب ضعفها.</p>
+        <div class="welcome-facts" aria-label="قواعد اللعبة">
+          <div class="fact"><strong>+5</strong>لكل إجابة صحيحة</div>
+          <div class="fact"><strong>50</strong>سؤالًا في البنك</div>
+          <div class="fact"><strong>🏆</strong>أفضل نتيجة محفوظة</div>
+        </div>
+        <button id="startButton" class="primary-button" type="button">ابدأ التحدي 🚀</button>
+        <p id="welcomeBest" class="best-note"></p>
+      </div>
+    </section>
+
+    <section id="quizScreen" class="screen" aria-labelledby="questionText">
+      <div class="quiz-header">
+        <div class="question-count">السؤال <span id="currentNumber">1</span> من <span id="totalNumber">20</span></div>
+        <div class="round-score">النقاط: <span id="score">0</span> ⭐</div>
+      </div>
+      <div class="progress-track" aria-label="التقدم في الجولة">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+
+      <div class="card question-card">
+        <div id="topicLabel" class="topic-label">📜 مظاهر الحضارة السومرية</div>
+        <h2 id="questionText" class="question-text"></h2>
+        <div id="answers" class="answers" role="group" aria-label="خيارات الإجابة"></div>
+        <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+        <button id="restartButton" class="primary-button restart-button" type="button">ابدأ من جديد 🔄</button>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="screen" aria-labelledby="resultTitle">
+      <div class="card result-card">
+        <span class="result-emoji" aria-hidden="true">🎊</span>
+        <h2 id="resultTitle">انتهى التحدي!</h2>
+        <div id="finalScore" class="final-score">0</div>
+        <p>نقطة</p>
+        <p id="resultMessage">أحسنت! هل تستطيع تحطيم رقمك القياسي؟</p>
+        <div class="result-actions">
+          <button id="playAgainButton" class="primary-button" type="button">العب مرة أخرى 🔄</button>
+          <button id="homeButton" class="secondary-button" type="button">العودة للرئيسية 🏠</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // The question bank intentionally contains only the information supplied in the brief.
+    const questionBank = [
+      { q: "ما اسم إحدى أشهر الملاحم السومرية؟", a: "ملحمة جلجامش", o: ["ملحمة جلجامش", "ملحمة الإسكندر", "ملحمة روما", "ملحمة الفراعنة"], topic: "📜 الكتابة والأدب" },
+      { q: "تعد ملحمة جلجامش واحدة من ماذا؟", a: "أقدم الأعمال الأدبية المحفوظة في العالم", o: ["أقدم الأعمال الأدبية المحفوظة في العالم", "أحدث الكتب العلمية", "أول كتاب رياضيات", "أول خريطة للعالم"], topic: "📜 الكتابة والأدب" },
+      { q: "على ماذا كُتبت ملحمة جلجامش؟", a: "قطع من الطين الناعم", o: ["قطع من الطين الناعم", "أوراق البردي", "ألواح خشبية", "جلود الحيوانات"], topic: "📜 الكتابة والأدب" },
+      { q: "ما الأداة التي استخدمها السومريون للكتابة على الطين؟", a: "أداة تشبه القلم", o: ["أداة تشبه القلم", "فرشاة", "ريشة", "إبرة"], topic: "📜 الكتابة والأدب" },
+      { q: "ما الذي وضعت السومريون قواعده عن طريق المدونات القانونية؟", a: "القواعد القانونية", o: ["القواعد القانونية", "القواعد الرياضية فقط", "القواعد الزراعية", "قواعد بناء السفن"], topic: "📜 الكتابة والأدب" },
+      { q: "ما نظام العد الذي طوره السومريون؟", a: "نظام العد الستيني", o: ["نظام العد الستيني", "نظام العد الثنائي", "نظام العد العشري فقط", "نظام العد الخماسي"], topic: "🔢 الرياضيات" },
+      { q: "على ماذا يقوم نظام العد الستيني؟", a: "مضاعفات العدد 60", o: ["مضاعفات العدد 60", "مضاعفات العدد 10", "مضاعفات العدد 5", "مضاعفات العدد 100"], topic: "🔢 الرياضيات" },
+      { q: "إلى كم دقيقة قسم السومريون الساعة؟", a: "60 دقيقة", o: ["60 دقيقة", "30 دقيقة", "100 دقيقة", "24 دقيقة"], topic: "🔢 الرياضيات" },
+      { q: "إلى كم ثانية قسم السومريون الدقيقة؟", a: "60 ثانية", o: ["60 ثانية", "30 ثانية", "100 ثانية", "24 ثانية"], topic: "🔢 الرياضيات" },
+      { q: "إلى كم درجة قسم السومريون الدائرة؟", a: "360 درجة", o: ["360 درجة", "180 درجة", "60 درجة", "90 درجة"], topic: "🔢 الرياضيات" },
+      { q: "أي مما يلي يرتبط بنظام العد الستيني عند السومريين؟", a: "60 دقيقة في الساعة و60 ثانية في الدقيقة", o: ["60 دقيقة في الساعة و60 ثانية في الدقيقة", "100 دقيقة في الساعة", "24 ثانية في الدقيقة", "10 درجات للدائرة"], topic: "🔢 الرياضيات" },
+      { q: "ماذا كان من إنجازات السومريين في علم الفلك؟", a: "وضع التقويم الشمسي والقمري", o: ["وضع التقويم الشمسي والقمري", "اختراع الهاتف", "اكتشاف الكهرباء", "اختراع الطائرة"], topic: "🌙 علم الفلك" },
+      { q: "من أول من وضع التقويم الشمسي والقمري حسب الصفحة؟", a: "السومريون", o: ["السومريون", "الرومان", "الإغريق", "الفرس"], topic: "🌙 علم الفلك" },
+      { q: "ما نوعا التقويم اللذان عرفهما السومريون؟", a: "الشمسي والقمري", o: ["الشمسي والقمري", "الميلادي والهجري", "الزراعي والتجاري", "الأسبوعي والسنوي"], topic: "🌙 علم الفلك" },
+      { q: "ما أنواع العدسات التي عرفها السومريون؟", a: "المحدبة والمقعرة", o: ["المحدبة والمقعرة", "الدائرية والمربعة", "الكبيرة والصغيرة", "الزجاجية والمعدنية"], topic: "🌙 علم الفلك" },
+      { q: "ماذا عرف السومريون في مجال الفلك؟", a: "كواكب المجموعة الشمسية", o: ["كواكب المجموعة الشمسية", "الأقمار الصناعية الحديثة", "الصواريخ", "أجهزة الرادار"], topic: "🌙 علم الفلك" },
+      { q: "أي مما يلي من إنجازات السومريين في علم الفلك؟", a: "التقويم الشمسي والقمري والعدسات المحدبة والمقعرة ومعرفة كواكب المجموعة الشمسية", o: ["التقويم الشمسي والقمري والعدسات المحدبة والمقعرة ومعرفة كواكب المجموعة الشمسية", "صناعة السيارات", "صناعة الحواسيب", "اختراع الأقمار الصناعية"], topic: "🌙 علم الفلك" },
+      { q: "أين بنى السومريون الزقورات؟", a: "على التلال المرتفعة", o: ["على التلال المرتفعة", "تحت الأرض", "وسط الأنهار", "داخل الكهوف"], topic: "🏛️ الزقورات" },
+      { q: "لماذا بنى السومريون الزقورات على التلال المرتفعة؟", a: "لتجنب فيضانات نهري دجلة والفرات", o: ["لتجنب فيضانات نهري دجلة والفرات", "لتكون قريبة من البحر", "لتخزين الطعام", "لتربية الحيوانات"], topic: "🏛️ الزقورات" },
+      { q: "ما الزقورة؟", a: "صرح هرمي مدرج شاق الارتفاع", o: ["صرح هرمي مدرج شاق الارتفاع", "منزل صغير", "سور دفاعي", "طريق تجاري"], topic: "🏛️ الزقورات" },
+      { q: "كيف كانت واجهات الزقورات؟", a: "تغلف بالحجر", o: ["تغلف بالحجر", "تغلف بالخشب", "تغلف بالحديد", "تترك من الطين فقط"], topic: "🏛️ الزقورات" },
+      { q: "ماذا يميز شكل الزقورة؟", a: "شكل هرمي مدرج", o: ["شكل هرمي مدرج", "شكل دائري", "شكل مربع مسطح", "شكل سفينة"], topic: "🏛️ الزقورات" },
+      { q: "ماذا كانت زوايا الزقورات تشير إليه؟", a: "الاتجاهات الجغرافية الأربعة", o: ["الاتجاهات الجغرافية الأربعة", "اتجاه واحد فقط", "اتجاه البحر فقط", "اتجاه الشمس فقط"], topic: "🏛️ الزقورات" },
+      { q: "ما المثال المذكور على الزقورات؟", a: "زقورة أور", o: ["زقورة أور", "زقورة بابل", "زقورة مصر", "زقورة روما"], topic: "🏛️ الزقورات" },
+      { q: "ماذا قيل عن زقورة أور؟", a: "من أقدم الزقورات التي عرفت في بلاد الرافدين", o: ["من أقدم الزقورات التي عرفت في بلاد الرافدين", "أحدث زقورة في التاريخ", "أكبر قصر روماني", "أول معبد مصري"], topic: "🏛️ الزقورات" },
+      { q: "ما أحد أسباب بناء الزقورات على التلال المرتفعة؟", a: "تجنب فيضانات نهري دجلة والفرات", o: ["تجنب فيضانات نهري دجلة والفرات", "زيادة مساحة الزراعة", "بناء السفن", "تخزين المياه"], topic: "🏛️ الزقورات" },
+      { q: "لماذا استخدمت الزقورات في العبادة؟", a: "بسبب تعدد الآلهة", o: ["بسبب تعدد الآلهة", "بسبب قلة السكان", "بسبب التجارة", "بسبب الزراعة"], topic: "⛩️ أهمية الزقورات" },
+      { q: "في ماذا استخدمت الزقورات أيضًا؟", a: "غايات فلكية", o: ["غايات فلكية", "صناعة الملابس", "التجارة البحرية", "صناعة الأسلحة"], topic: "⛩️ أهمية الزقورات" },
+      { q: "ما مثال استخدام الزقورات في الغايات الفلكية؟", a: "مراقبة النجوم", o: ["مراقبة النجوم", "زراعة القمح", "صناعة الفخار", "تخزين الحبوب"], topic: "⛩️ أهمية الزقورات" },
+      { q: "ما الاستخدامان المذكوران للزقورات؟", a: "العبادة والغايات الفلكية", o: ["العبادة والغايات الفلكية", "التجارة والزراعة", "الصناعة والحروب", "السكن والتجارة"], topic: "⛩️ أهمية الزقورات" },
+      { q: "لماذا استخدمت الزقورات في العبادة؟", a: "بسبب تعدد الآلهة", o: ["بسبب تعدد الآلهة", "بسبب مراقبة النجوم", "بسبب الفيضانات", "بسبب التجارة"], topic: "⛩️ أهمية الزقورات" },
+      { q: "لماذا ضعفت الحضارة السومرية؟", a: "بسبب عدم تمكن السومريين من الصمود أمام الغزوات الخارجية", o: ["بسبب عدم تمكن السومريين من الصمود أمام الغزوات الخارجية", "بسبب اكتشاف أمريكا", "بسبب نقص الذهب فقط", "بسبب تغير المناخ فقط"], topic: "⚔️ ضعف الحضارة السومرية" },
+      { q: "ما السبب الداخلي الذي ساهم في ضعف السومريين؟", a: "النزاعات والخلافات بين مدنهم", o: ["النزاعات والخلافات بين مدنهم", "زيادة التجارة", "تطور العلوم", "بناء الزقورات"], topic: "⚔️ ضعف الحضارة السومرية" },
+      { q: "أمام ماذا لم يتمكن السومريون من الصمود؟", a: "الغزوات الخارجية", o: ["الغزوات الخارجية", "الفيضانات فقط", "التجارة", "الرحلات البحرية"], topic: "⚔️ ضعف الحضارة السومرية" },
+      { q: "ما العلاقة بين النزاعات والخلافات وضعف الحضارة السومرية؟", a: "ساهمت النزاعات والخلافات بين المدن في عدم قدرتهم على الصمود أمام الغزوات الخارجية", o: ["ساهمت النزاعات والخلافات بين المدن في عدم قدرتهم على الصمود أمام الغزوات الخارجية", "ساعدت النزاعات على تقوية الدولة", "لم يكن لها أي تأثير", "أدت إلى زيادة التجارة"], topic: "⚔️ ضعف الحضارة السومرية" },
+      { q: "من سيطر على المدن السومرية بعد ضعفها؟", a: "الأكاديون", o: ["الأكاديون", "الرومان", "المصريون", "الفرس"], topic: "👑 نتائج الضعف" },
+      { q: "ماذا فعل الأكاديون بالمدن السومرية؟", a: "سيطروا على كافة المدن السومرية", o: ["سيطروا على كافة المدن السومرية", "تركوا جميع المدن", "بنوا مدنًا جديدة فقط", "قسموا المدن إلى دول مستقلة"], topic: "👑 نتائج الضعف" },
+      { q: "ماذا فعل الأكاديون بالمدن السومرية بعد السيطرة عليها؟", a: "ضموا الأكاديون المدن السومرية في دولة واحدة تحت سيطرتهم", o: ["ضموا الأكاديون المدن السومرية في دولة واحدة تحت سيطرتهم", "أعادوا المدن إلى استقلالها", "نقلوا المدن إلى مصر", "ألغوا جميع المدن"], topic: "👑 نتائج الضعف" },
+      { q: "في دولة واحدة تحت سيطرة من ضمت المدن السومرية؟", a: "تحت سيطرة الأكاديين", o: ["تحت سيطرة الأكاديين", "تحت سيطرة الرومان", "تحت سيطرة المصريين", "تحت سيطرة الفرس"], topic: "👑 نتائج الضعف" },
+      { q: "ما النتيجة السياسية لضعف المدن السومرية؟", a: "سيطر الأكاديون على المدن السومرية وضمّوها في دولة واحدة تحت سيطرتهم", o: ["سيطر الأكاديون على المدن السومرية وضمّوها في دولة واحدة تحت سيطرتهم", "أصبحت كل مدينة مستقلة أكثر", "أصبحت المدن جزءًا من مصر", "انتهت جميع المدن"], topic: "👑 نتائج الضعف" },
+      { q: "أي من الآتي يعد إنجازًا سومريًا في الرياضيات؟", a: "نظام العد الستيني", o: ["نظام العد الستيني", "اختراع الكهرباء", "اختراع الهاتف", "اختراع الحاسوب"], topic: "⭐ مراجعة شاملة" },
+      { q: "أي من الآتي يعد إنجازًا سومريًا في الكتابة والأدب؟", a: "ملحمة جلجامش", o: ["ملحمة جلجامش", "اختراع الطباعة", "الصحف", "الروايات الحديثة"], topic: "⭐ مراجعة شاملة" },
+      { q: "أي من الآتي يعد إنجازًا سومريًا في علم الفلك؟", a: "معرفة كواكب المجموعة الشمسية", o: ["معرفة كواكب المجموعة الشمسية", "صناعة الصواريخ", "اكتشاف الأقمار الصناعية", "اختراع التلسكوبات الحديثة"], topic: "⭐ مراجعة شاملة" },
+      { q: "أي من الآتي يصف الزقورة بشكل صحيح؟", a: "صرح هرمي مدرج شاق الارتفاع", o: ["صرح هرمي مدرج شاق الارتفاع", "منزل دائري", "قلعة تحت الأرض", "طريق مرتفع"], topic: "⭐ مراجعة شاملة" },
+      { q: "ما السبب الرئيسي المذكور لبناء الزقورات على التلال المرتفعة؟", a: "تجنب فيضانات نهري دجلة والفرات", o: ["تجنب فيضانات نهري دجلة والفرات", "مراقبة السفن", "زيادة الأراضي الزراعية", "بناء المنازل"], topic: "⭐ مراجعة شاملة" },
+      { q: "ما مثال الزقورة المذكور في الصفحة؟", a: "زقورة أور", o: ["زقورة أور", "زقورة روما", "زقورة أثينا", "زقورة مصر"], topic: "⭐ مراجعة شاملة" },
+      { q: "ما الاستخدام الفلكي للزقورات؟", a: "مراقبة النجوم", o: ["مراقبة النجوم", "دراسة المحاصيل", "صناعة الأدوات", "التجارة"], topic: "⭐ مراجعة شاملة" },
+      { q: "ما سبب استخدام الزقورات في العبادة؟", a: "تعدد الآلهة", o: ["تعدد الآلهة", "وجود الأنهار", "كثرة السكان", "التجارة"], topic: "⭐ مراجعة شاملة" },
+      { q: "ما أبرز سبب لضعف الحضارة السومرية؟", a: "الغزوات الخارجية مع النزاعات والخلافات بين المدن", o: ["الغزوات الخارجية مع النزاعات والخلافات بين المدن", "تطور الرياضيات", "بناء الزقورات", "اختراع التقويم"], topic: "⭐ مراجعة شاملة" },
+      { q: "من سيطر على المدن السومرية بعد ضعفها؟", a: "الأكاديون", o: ["الأكاديون", "الرومان", "المصريون", "الإغريق"], topic: "⭐ مراجعة شاملة" }
+    ];
+
+    const $ = (selector) => document.querySelector(selector);
+    const screens = {
+      welcome: $("#welcomeScreen"),
+      quiz: $("#quizScreen"),
+      result: $("#resultScreen")
+    };
+    const letters = ["أ", "ب", "ج", "د"];
+    const STORAGE_KEY = "sumerianChallengeHighScore";
+    let roundQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let locked = false;
+
+    function shuffle(items) {
+      const copy = [...items];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function getBestScore() {
+      return Number(localStorage.getItem(STORAGE_KEY) || 0);
+    }
+
+    function updateBestScore() {
+      const best = getBestScore();
+      $("#bestScore").textContent = `أفضل نتيجة: ${best}`;
+      $("#welcomeBest").textContent = best ? `رقمك القياسي الحالي: ${best} ⭐` : "ابدأ أول جولة وسجّل رقمك القياسي!";
+    }
+
+    function showScreen(name) {
+      Object.values(screens).forEach(screen => screen.classList.remove("active"));
+      screens[name].classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function startGame() {
+      // A new round samples a fresh number of questions and never repeats within that round.
+      const roundSize = Math.floor(Math.random() * 6) + 15;
+      roundQuestions = shuffle(questionBank).slice(0, roundSize);
+      currentIndex = 0;
+      score = 0;
+      locked = false;
+      $("#totalNumber").textContent = roundQuestions.length;
+      $("#score").textContent = score;
+      showScreen("quiz");
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const question = roundQuestions[currentIndex];
+      const options = shuffle(question.o);
+      $("#currentNumber").textContent = currentIndex + 1;
+      $("#questionText").textContent = question.q;
+      $("#topicLabel").textContent = question.topic;
+      $("#progressBar").style.width = `${(currentIndex / roundQuestions.length) * 100}%`;
+      $("#feedback").className = "feedback";
+      $("#feedback").innerHTML = "";
+      $("#restartButton").classList.remove("show");
+      const answers = $("#answers");
+      answers.innerHTML = "";
+      options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "answer-button";
+        button.innerHTML = `<span class="answer-letter">${letters[index]}</span><span>${option}</span>`;
+        button.addEventListener("click", () => answerQuestion(button, option, question.a));
+        answers.appendChild(button);
+      });
+      locked = false;
+    }
+
+    function answerQuestion(selectedButton, selected, correct) {
+      if (locked) return;
+      locked = true;
+      document.querySelectorAll(".answer-button").forEach(button => button.disabled = true);
+
+      if (selected === correct) {
+        selectedButton.classList.add("correct");
+        score += 5;
+        $("#score").textContent = score;
+        $("#feedback").className = "feedback show";
+        $("#feedback").innerHTML = "<strong>إجابة صحيحة! +5 نقاط 🎉</strong><small>استمر، أنت في الطريق الصحيح!</small>";
+        $("#progressBar").style.width = `${((currentIndex + 1) / roundQuestions.length) * 100}%`;
+        window.setTimeout(() => {
+          currentIndex++;
+          if (currentIndex >= roundQuestions.length) {
+            finishGame();
+          } else {
+            renderQuestion();
+          }
+        }, 700);
+      } else {
+        selectedButton.classList.add("wrong");
+        document.querySelectorAll(".answer-button").forEach(button => {
+          if (button.textContent.includes(correct)) button.classList.add("correct");
+        });
+        $("#feedback").className = "feedback show";
+        $("#feedback").innerHTML = `<strong>إجابة خاطئة ❌</strong><small>الإجابة الصحيحة هي: <b>${correct}</b><br>ستبدأ من جديد!</small>`;
+        score = 0;
+        $("#score").textContent = score;
+        $("#restartButton").classList.add("show");
+      }
+    }
+
+    function finishGame() {
+      const best = getBestScore();
+      if (score > best) localStorage.setItem(STORAGE_KEY, String(score));
+      $("#finalScore").textContent = score;
+      $("#resultMessage").textContent = score > best
+        ? "🏆 رقم قياسي جديد! أحسنت، هل تستطيع تحسينه أكثر؟"
+        : "أحسنت! هل تستطيع تحطيم رقمك القياسي؟";
+      updateBestScore();
+      showScreen("result");
+    }
+
+    $("#startButton").addEventListener("click", startGame);
+    $("#playAgainButton").addEventListener("click", startGame);
+    $("#restartButton").addEventListener("click", startGame);
+    $("#homeButton").addEventListener("click", () => {
+      updateBestScore();
+      showScreen("welcome");
+    });
+    updateBestScore();
+  </script>
+</body>
+</html>
